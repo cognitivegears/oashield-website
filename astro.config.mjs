@@ -13,10 +13,11 @@ export default defineConfig({
 			},
 			sidebar: [
 				{
-					label: 'Guides',
+					label: 'Start Here',
 					items: [
 						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', slug: 'guides/example' },
+						{ label: 'Installation', slug: 'guides/install' },
+						{ label: 'Quick Start', slug: 'guides/start' },
 					],
 				},
 				{
