@@ -4,11 +4,12 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
+	site: 'https://oashield.dev',
 	integrations: [
 		starlight({
-			title: 'My Docs',
+			title: 'OAShield',
 			social: {
-				github: 'https://github.com/withastro/starlight',
+				github: 'https://github.com/cognitivegears/oashield',
 			},
 			sidebar: [
 				{

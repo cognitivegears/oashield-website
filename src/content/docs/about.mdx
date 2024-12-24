@@ -1,0 +1,49 @@
+---
+title: About OAShield
+description: Background and information about OAShield
+---
+
+import { Card, CardGrid, LinkButton } from '@astrojs/starlight/components';
+
+## OAShield: Strengthening REST API Security with OpenAPI-Driven WAF Rules
+
+APIs are at the core of modern applications, making their security critical. Traditional Web Application Firewalls (WAFs) typically rely on pattern matching to block suspicious traffic, but this reactive approach can leave gaps for attackers to exploit. OAShield takes a proactive stance, leveraging OpenAPI specifications to enforce strict API compliance and significantly reduce the attack surface.
+
+## What Is OAShield?
+
+OAShield is an open-source tool that generates ModSecurity WAF rules directly from OpenAPI specs. By aligning WAF rules with your API’s design, OAShield ensures that only expected endpoints, HTTP methods, and parameters are allowed while blocking all other traffic.
+
+This specification-driven approach minimizes risks by focusing on what’s explicitly allowed rather than trying to identify all possible threats—a proven method for hardening API security.
+
+## Current Features
+
+OAShield already supports a robust set of features to secure your APIs:
+* Generates Modsecurity3 compatible rules
+* Endpoint Validation: Only allows URLs defined in the OpenAPI spec.
+* HTTP Method Restrictions: Ensures that only permitted HTTP methods are used for each endpoint.
+* Parameter Validation:
+  * Checks required parameters.
+  * Validates parameter types and formats (e.g., numbers, dates).
+  * Enforces minimum and maximum lengths for parameter values.
+  * Handles multiple parameter values and validates their count.
+  * Blocks extra parameters not defined in the spec.
+
+## Future Plans
+
+OAShield is an evolving project, with exciting enhancements planned to expand its capabilities:
+* Support for complex JSON and XML data validations.
+* Validation of authentication types.
+* Expanded coverage for OpenAPI edge cases.
+* Customization options for rule behaviors.
+* CI/CD integration tools (e.g., GitHub Actions, Jenkins plugins).
+* Support for additional WAF rule types, such as Open Policy Agent (OPA) and commercial solutions like F5 WAF policies.
+
+## Why Use OAShield?
+
+OAShield complements traditional WAF protections, such as the OWASP Core Rule Set (CRS), by narrowing the attack surface to match your API’s design. Its integration with CI/CD pipelines allows seamless updates to your security rules as your API evolves, keeping your defenses current and in sync with your latest API definitions.
+
+## Join the Community
+
+OAShield is built with collaboration in mind. Whether you’re interested in using it, sharing feedback, or contributing code, your input is invaluable. Together, we can make API security smarter, stronger, and more efficient.
+
+Explore the project on GitHub: https://www.github.com/cognitivegears/oashield
