@@ -3,9 +3,25 @@ title: Example Guide
 description: A guide in my new Starlight docs site.
 ---
 
-Guides lead a user through a specific task they want to accomplish, often with a sequence of steps.
-Writing a good guide requires thinking about what your users are trying to do.
+### Build the Project:
+1. **Prerequisites:**
+    - Java 8 or later
+    - Maven 3.6.0 or later
+2. Clone the repository:
 
-## Further reading
+```cmd
+      git clone https://github.com/cognitivegears/oashield.git
+```
 
-- Read [about how-to guides](https://diataxis.fr/how-to-guides/) in the Diátaxis framework
+3. Build the generator project including the CLI jar:
+
+```cmd
+     cd oashield
+     mvn package -P build-cli-jar
+```
+
+This will produce a JAR file `oashield-cli.jar` in the `target` directory.
+
+### OR Download the CLI Jar:
+
+   - Download the latest release of oashield-cli.jar from the [Releases](https://github.com/cognitivegears/oashield/releases) page.

@@ -7,8 +7,22 @@ description: Getting started with running OAShield
 
 If you have not already, first install OAShield. See [Installation](/guides/install) for instructions.
 
-Writing a good guide requires thinking about what your users are trying to do.
+## Running OAShield
 
-## Further reading
+Use the following command to generate the ModSecurity configuration:
 
-- Read [about how-to guides](https://diataxis.fr/how-to-guides/) in the Diátaxis framework
+```cmd
+     java -cp target/oashield-cli.jar org.openapitools.codegen.OpenAPIGenerator generate -g modsecurity3 -i /path/to/openapi.yaml -o /path/to/output/dir
+```
+
+ Replace `/path/to/openapi.yaml`, and `/path/to/output/dir` with the appropriate paths.
+
+For Windows users, use `;` instead of `:` in the classpath:
+
+```cmd
+     java -cp target/oashield-cli.jar org.openapitools.codegen.OpenAPIGenerator generate -g modsecurity3 -i /path/to/openapi.yaml -o /path/to/output/dir
+```
+
+### Deploy the generated rules:
+
+Copy the generated ModSecurity configuration files from the output path (i.e. `/path/to/output/dir`) to your ModSecurity setup.
