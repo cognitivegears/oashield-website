@@ -4,7 +4,7 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://oashield.dev',
+	site: 'https://oashield.com',
 	integrations: [
 		starlight({
 			title: 'OAShield',
@@ -21,8 +21,13 @@ export default defineConfig({
 					],
 				},
 				{
-					label: 'Reference',
-					autogenerate: { directory: 'reference' },
+					label: 'Additional Information',
+					items: [
+						// Each item here is one entry in the navigation menu.
+						{ label: 'Open API', slug: 'reference/openapi' },
+						{ label: 'ModSecurity', slug: 'reference/modsecurity' },
+						{ label: 'Positive Security Models', slug: 'reference/positive' },
+					],
 				},
 			],
 		}),

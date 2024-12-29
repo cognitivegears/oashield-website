@@ -1,6 +1,6 @@
 ---
-title: Example Guide
-description: A guide in my new Starlight docs site.
+title: Install OAShield
+description: How to build and install OAShield
 ---
 
 ### Build the Project:

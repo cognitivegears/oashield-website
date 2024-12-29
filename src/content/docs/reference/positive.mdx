@@ -1,0 +1,26 @@
+---
+title: Open API
+description: Information about Open API 
+---
+
+import { LinkButton } from '@astrojs/starlight/components';
+
+Implementing a positive security model in cybersecurity involves defining and permitting only known, trusted behaviors while blocking all others. This approach contrasts with negative security models, which block known threats but allow all other activities by default. By focusing on explicitly allowed actions, positive security models can significantly reduce the potential attack surface.
+
+## Benefits of Positive Security Models:
+
+Reduction in False Negatives: By allowing only predefined legitimate activities, positive security models minimize the chances of undetected malicious actions that don't match known threat patterns. 
+
+Protection Against Zero-Day Attacks: Since only specified behaviors are permitted, unknown vulnerabilities or exploits are less likely to be effective, enhancing defense against zero-day attacks. 
+
+Enhanced Input Validation: Positive security enforces strict input validation, ensuring that only correctly formatted and expected data is processed, thereby preventing injection attacks and other input-based threats. 
+
+## OAShield's Role in Positive Security:
+
+OAShield exemplifies the positive security model by generating Web Application Firewall (WAF) configurations based on OpenAPI specifications. This ensures that only valid API calls, as defined in the specification, are permitted. For instance, if an API endpoint doesn't support a POST method, OAShield-generated rules will block any POST requests to that endpoint, effectively reducing the attack surface.
+
+## Contradiction in Security Practices:
+
+It's noteworthy that while developers are encouraged to implement positive input validation—accepting only known good inputs—many security tools predominantly focus on detecting anomalies or known bad patterns (negative security). This inconsistency c security coverage. Adopting tools and practices that align with the positive security model, like OAShield, can bridge this gap by ensuring that only explicitly permitted behaviors are allowed, thereby enhancing overall security posture.
+
+In conclusion, integrating positive security methods, such as those employed by OAShield, into your cybersecurity strategy can lead to a more robust defense by strictly enforcing known good behaviors and reducing reliance on detecting and responding to malicious activities after they occur.
