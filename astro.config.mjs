@@ -5,27 +5,41 @@ import starlight from '@astrojs/starlight';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://oashield.com',
+	redirects: {
+		'/about': '/why',
+	},
 	integrations: [
 		starlight({
 			title: 'OAShield',
+			description:
+				'Generate positive-security WAF rules for ModSecurity and Coraza directly from your OpenAPI specification.',
 			social: {
 				github: 'https://github.com/cognitivegears/oashield',
 			},
+			customCss: ['./src/styles/custom.css'],
 			sidebar: [
 				{
 					label: 'Start Here',
 					items: [
-						// Each item here is one entry in the navigation menu.
+						{ label: 'Why OAShield?', slug: 'why' },
 						{ label: 'Installation', slug: 'guides/install' },
 						{ label: 'Quick Start', slug: 'guides/start' },
+						{ label: 'Configuration', slug: 'guides/configuration' },
 					],
 				},
 				{
-					label: 'Additional Information',
+					label: 'Learn',
 					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: 'Open API', slug: 'reference/openapi' },
-						{ label: 'ModSecurity', slug: 'reference/modsecurity' },
+						{ label: 'How It Works', slug: 'how' },
+						{ label: 'Use Cases', slug: 'use-cases' },
+						{ label: 'Other Solutions', slug: 'alternatives' },
+					],
+				},
+				{
+					label: 'Background',
+					items: [
+						{ label: 'OpenAPI', slug: 'reference/openapi' },
+						{ label: 'ModSecurity & Coraza', slug: 'reference/modsecurity' },
 						{ label: 'Positive Security Models', slug: 'reference/positive' },
 					],
 				},

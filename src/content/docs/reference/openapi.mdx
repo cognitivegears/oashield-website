@@ -1,30 +1,39 @@
 ---
-title: Open API
-description: Information about Open API 
+title: OpenAPI
+description: What the OpenAPI Specification is, and how OAShield uses it as a security contract.
 ---
 
-import { LinkButton } from '@astrojs/starlight/components';
+The [OpenAPI Specification](https://www.openapis.org/) (OAS, formerly Swagger) is a
+standardized, language-agnostic format for describing RESTful APIs. An OpenAPI document,
+written in YAML or JSON, defines every endpoint, request and response format, parameter,
+data type, and authentication method an API supports, in a machine-readable way.
 
-The OpenAPI Specification (OAS) is a standardized, language-agnostic framework for describing RESTful APIs. It enables developers to define endpoints, request and response formats, authentication methods, and other aspects of an API in a machine-readable format, typically using JSON or YAML. This comprehensive specification facilitates clear communication among development teams and between clients and servers, ensuring a shared understanding of the API's functionality.
+## What teams use OpenAPI for
 
-Developers utilize OpenAPI to create detailed specifications that serve multiple purposes:
+- **Design and documentation.** The spec is a blueprint of the API's structure and
+  behavior. It's invaluable during design and becomes the canonical reference afterward.
+  Interactive docs (Swagger UI, Redoc, and friends) render directly from it.
+- **Code generation.** Tools like [OpenAPI Generator](https://openapi-generator.tech)
+  produce client SDKs, server stubs, and documentation in dozens of languages, letting
+  developers focus on business logic instead of boilerplate.
+- **Testing and mocking.** Contract tests and mock servers can be driven straight from
+  the document.
 
-Design and Documentation: An OpenAPI document provides a clear blueprint of the API's structure and behavior, which is invaluable during the design phase and serves as comprehensive documentation for future reference. 
+The common thread: the OpenAPI document is the **single source of truth** for what the
+API accepts and returns.
 
-<LinkButton href="https://hackernoon.com/a-comprehensive-guide-to-openapi-specification?utm_source=chatgpt.com" variant="secondary" icon="external">Introduction to OpenAPI at Hacker Noon</LinkButton>
+## How OAShield uses OpenAPI
 
-Code Generation: Tools like OpenAPI Generator can produce client libraries, server stubs, and API documentation in various programming languages based on the OpenAPI specification. This automation accelerates development and maintains consistency across different platforms. 
+OAShield extends that source of truth to your security perimeter. It's built on OpenAPI
+Generator itself, but instead of generating a client or server, it generates
+[WAF rules](/reference/modsecurity) that permit only the traffic your spec defines:
 
-<LinkButton href="https://openapi-generator.tech" variant="secondary" icon="external">Open API Generator</LinkButton>
+- Declared endpoints and methods are allowed; everything else is denied.
+- Parameter types, formats, enums, patterns, and numeric bounds from your schemas become
+  validation rules.
+- Required parameters and body fields are enforced; undeclared ones are blocked.
 
-OpenAPI generators are particularly beneficial as they automate the creation of:
-
-Application Interfaces: By generating client SDKs and server stubs, developers can focus on business logic rather than boilerplate code, enhancing productivity and reducing errors. 
-
-<LinkButton href="https://www.baeldung.com/java-openapi-generator-server" variant="secondary" icon="external">Implementation Using OpenAPI Generator</LinkButton>
-
-Documentation: Automatically generated, up-to-date documentation ensures that API consumers have access to accurate information, facilitating easier integration and usage. 
-
-Configuration Files: Generators can produce configuration files required for deploying and managing APIs, streamlining the setup process and ensuring consistency across environments. 
-
-OAShield leverages the OpenAPI specification to enhance security by generating configuration rules for Web Application Firewalls (WAFs). By analyzing the API's defined behaviors, OAShield creates positive security models that permit only legitimate traffic as specified in the OpenAPI document. For instance, if the API does not define a POST method for a particular endpoint, OAShield will generate rules to block any POST requests to that endpoint. This approach ensures that only valid API calls are allowed, effectively mitigating potential threats from undefined or malicious operations.
+For instance, if the API doesn't define a `POST` method for a particular endpoint,
+OAShield generates rules that block any `POST` request to it. The better your spec, the
+tighter your perimeter: precise types, patterns, and enums translate directly into
+stricter validation. See [How It Works](/how) for the full mechanics.

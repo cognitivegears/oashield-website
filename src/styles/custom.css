@@ -1,0 +1,76 @@
+/* OAShield theme: palette drawn from the shield logo (navy + steel blue) */
+
+/* Dark mode (Starlight default) */
+:root {
+	--sl-color-accent-low: #14303f;
+	--sl-color-accent: #3d7fa3;
+	--sl-color-accent-high: #a9cde0;
+	--sl-color-white: #ffffff;
+	--sl-color-gray-1: #e7eef3;
+	--sl-color-gray-2: #bac9d3;
+	--sl-color-gray-3: #7e95a4;
+	--sl-color-gray-4: #4b6270;
+	--sl-color-gray-5: #2c414d;
+	--sl-color-gray-6: #1b2e39;
+	--sl-color-black: #12222b;
+}
+
+/* Light mode */
+:root[data-theme='light'] {
+	--sl-color-accent-low: #cfe3ee;
+	--sl-color-accent: #2e6a8c;
+	--sl-color-accent-high: #1c3d51;
+	--sl-color-white: #12222b;
+	--sl-color-gray-1: #1b2e39;
+	--sl-color-gray-2: #2c414d;
+	--sl-color-gray-3: #4b6270;
+	--sl-color-gray-4: #7e95a4;
+	--sl-color-gray-5: #bac9d3;
+	--sl-color-gray-6: #e7eef3;
+	--sl-color-gray-7: #f3f7fa;
+	--sl-color-black: #ffffff;
+}
+
+/* Hero polish */
+[data-has-hero] .hero {
+	padding-block: 2rem;
+}
+[data-has-hero] .hero > img {
+	filter: drop-shadow(0 0 3rem color-mix(in srgb, var(--sl-color-accent) 35%, transparent));
+}
+[data-has-hero] .hero .tagline {
+	max-width: 34rem;
+	line-height: 1.6;
+}
+
+/* Subtle gradient backdrop on the splash page */
+[data-has-hero] .page {
+	background:
+		radial-gradient(140% 60% at 50% 0%, color-mix(in srgb, var(--sl-color-accent) 12%, transparent), transparent 70%),
+		var(--sl-color-bg);
+}
+
+/* Wide tables scroll sideways on small screens instead of breaking words */
+.sl-markdown-content table {
+	display: block;
+	max-width: 100%;
+	overflow-x: auto;
+}
+.sl-markdown-content table code {
+	word-break: normal;
+	overflow-wrap: normal;
+	white-space: nowrap;
+}
+.sl-markdown-content table td:last-child {
+	min-width: 22rem;
+}
+
+/* Cards: soften and lift on hover */
+.card {
+	border-radius: 0.75rem;
+	transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.card:hover {
+	border-color: var(--sl-color-accent);
+	transform: translateY(-2px);
+}

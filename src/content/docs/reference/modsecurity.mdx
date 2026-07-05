@@ -1,37 +1,55 @@
 ---
-title: Modsecurity3
-description: Information about ModSec
+title: ModSecurity & Coraza
+description: The two open-source WAF engines OAShield targets, and the SecLang rule language they share.
 ---
 
-import { LinkButton } from '@astrojs/starlight/components';
+OAShield generates rules in **SecLang**, the rule configuration language shared by the
+two major open-source WAF engines. You pick the target with a single option
+(`engineFlavor`, see [Configuration](/guides/configuration)). This page introduces both
+engines.
 
-ModSecurity, commonly known as ModSec, is an open-source web application firewall (WAF) that provides robust HTTP request and response filtering capabilities. It supports platforms like Apache HTTP Server, Microsoft IIS, and Nginx, operating under the Apache License 2.0, which allows for free integration and modification. 
+## ModSecurity v3
 
-<LinkButton href="https://www.baeldung.com/java-openapi-generator-server" variant="secondary" icon="external">ModSecurity</LinkButton>
+[OWASP ModSecurity](https://github.com/owasp-modsecurity/ModSecurity) is the original
+open-source web application firewall engine. Version 3 (libmodsecurity) is a standalone
+library with connectors for **nginx** and **Apache HTTP Server**, licensed under
+Apache 2.0. It provides real-time monitoring, logging, and filtering of HTTP traffic
+based on SecLang rules.
 
-## ModSecurity 3 Rules
+## Coraza
 
-At the core of ModSecurity's functionality is its rule configuration language, 'SecRules.' These rules enable real-time monitoring, logging, and filtering of HTTP communications based on user-defined criteria. While ModSecurity can be customized with bespoke rules, it is commonly deployed with the OWASP ModSecurity Core Rule Set (CRS). The CRS offers a comprehensive set of generic attack detection rules, providing protection against prevalent threats, including those listed in the OWASP Top Ten, with minimal false positives. 
+[Coraza](https://coraza.io) is a modern, actively developed WAF engine written in **Go**,
+compatible with ModSecurity's SecLang and the OWASP Core Rule Set. It embeds into
+Go applications and cloud-native proxies, including Envoy (via proxy-wasm) and HAProxy
+(via [coraza-spoa](https://github.com/corazawaf/coraza-spoa)), which makes it a natural
+fit for Kubernetes sidecars and modern edge stacks.
 
+For OAShield specifically, Coraza has one extra capability: its JSON
+`@validateSchema` operator lets the generated rules validate raw request bodies against a
+JSON Schema, covering constraints that per-field rules can't express. See
+[Engine flavors](/guides/configuration#engine-flavors).
 
-<LinkButton href="https://coreruleset.org/" variant="secondary" icon="external">OWASP CRS</LinkButton>
+## SecLang and the Core Rule Set
 
-## Generating ModSecurity 3 Rules from OpenAPI Specifications with OAShield
+Both engines are configured with **SecRules**: directives that inspect requests and
+responses and act on matches. Hand-written rules are powerful but labor-intensive, which
+is why most deployments run the
+[OWASP Core Rule Set (CRS)](https://coreruleset.org/), a broad, generic set of
+attack-detection rules covering the OWASP Top Ten and beyond.
 
-OpenAPI Specifications (OAS) serve as a standardized framework for defining RESTful APIs, detailing endpoints, request methods, parameters, and responses. Leveraging OAS to generate ModSecurity 3 rules enhances application security by ensuring that only valid API calls are permitted. This method involves creating rules that align with the API's defined behavior, effectively blocking any undefined or potentially malicious operations.
+CRS is a *negative* model: it recognizes known-bad patterns. OAShield generates the
+complementary *positive* layer, rules that permit only the operations your
+[OpenAPI spec](/reference/openapi) defines. Run together, unknown traffic is denied by
+the OAShield rules, and the traffic that remains is still screened by CRS.
 
-OAShield is an open-source project that facilitates the conversion of OpenAPI 3.x specifications into ModSecurity rules. By utilizing OAShield, organizations can automate the creation of WAF configurations that strictly adhere to their API specifications, thereby enhancing security by disallowing any undefined operations.
+## Deploying OAShield rules
 
-## Implementing ModSecurity 3 with OAShield-Generated Rules
-
-Integrating ModSecurity 3 with rules gAPI specifications using OAShield involves several steps:
-
-* Define the OpenAPI Specification: Ensure the API is thoroughly documented using the OpenAPI framework, detailing all endpoints, methods, parameters, and expected responses.
-
-* Generate ModSecurity Rules with OAShield: Utilize OAShield to transform the OpenAPI specification into ModSecurity 3 rules. This process creates a configuration that permits only the operations defined in the API specification.
-
-* Deploy the Rules: Integrate the generated rules into the ModSecurity 3 configuration on the web server or WAF appliance protecting the application.
-
-* Test and Monitor: Conduct thorough testing to verify that legitimate traffic is allowed and malicious or undefined requests are blocked. Continuous monitoring ensures the rules function as intended and provides insights for any necessary adjustments.
-
-By aligning ModSecurity 3 rules with OpenAPI specifications through OAShield, organizations can enforce strict API security policies, reducing the attack surface and enhancing the overall security posture of their web applications.
+1. **Define the OpenAPI specification.** Document all endpoints, methods, parameters, and
+   request bodies. The spec's precision determines the rules' strictness.
+2. **Generate rules with OAShield.** One command produces standard `.conf` files; see
+   the [Quick Start](/guides/start).
+3. **Deploy.** Include the generated files in your ModSecurity or Coraza configuration,
+   at the edge, in a sidecar, or on the web server itself.
+4. **Test and monitor.** Start in [detection-only mode](/guides/configuration#deny-behavior-and-logging)
+   to verify legitimate traffic is unaffected, then enable blocking. The audit log shows
+   every contract violation.

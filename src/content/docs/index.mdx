@@ -1,58 +1,89 @@
 ---
 title: OAShield
-description: OAShield is a project to convert API specifications into positive WAF rules
+description: Turn your OpenAPI spec into a Web Application Firewall that only allows valid API calls.
 template: splash
 hero:
-  tagline: When it comes to API security, it pays to be POSITIVE!
+  title: Your API spec is already a security policy.
+  tagline: OAShield turns your OpenAPI specification into WAF rules that permit exactly the requests your API defines, and deny everything else. Free, open source, and deployable on ModSecurity or Coraza.
   image:
     file: ../../assets/oashield.webp
   actions:
-    - text: Start Here
+    - text: Get Started
       link: /guides/install
       icon: right-arrow
+    - text: How It Works
+      link: /how
+      icon: open-book
+      variant: minimal
     - text: View on GitHub
       link: https://github.com/cognitivegears/oashield
-      icon: external
+      icon: github
       variant: minimal
 ---
 
-import { Card, CardGrid, LinkButton } from '@astrojs/starlight/components';
+import { Card, CardGrid } from '@astrojs/starlight/components';
 
-Convert your existing OpenAPI / Swagger specifications to Web Application Firewall (WAF)
-rules automatically! OAShield helps minimize the attack surface available to bad actors.
-This can be used in conjunction with traditional WAF sets like the [OWASP Core Rule Set](https://owasp.org/www-project-modsecurity-core-rule-set/).
+## One spec. One command. A positive security model.
 
+A traditional WAF is a blocklist. It tries to recognize known-bad requests, and anything
+it hasn't seen before gets through. OAShield flips that around: your OpenAPI spec defines
+what's **valid**, and the generated rules deny everything else by default.
 
-<LinkButton href="about.html" variant="secondary" icon="magnifier">Additional Background and Information</LinkButton>
+```bash
+java -cp oashield-cli.jar org.openapitools.codegen.OpenAPIGenerator \
+  generate -g modsecurity3 -i your-api.yaml -o rules/
+```
 
-OAShield is **free and Open Source**! See the license at:
+The output is standard [SecLang](https://coraza.io/docs/seclang/). Deploy it to
+[OWASP ModSecurity v3](https://github.com/owasp-modsecurity/ModSecurity) or
+[Coraza](https://coraza.io) alongside your API, in a sidecar, or at your edge.
 
-<LinkButton href="LICENSE.html" variant="secondary" icon="open-book">Apache 2.0 License</LinkButton>
-
-## OAShield Features
+## What the generated rules enforce
 
 <CardGrid stagger>
-	<Card title="HTTP Method Restriction" icon="information">
-		Only allow HTTP method types defined for an individual REST endpoint.
+	<Card title="Deny by default" icon="warning">
+		Endpoints, methods, and parameters not declared in your spec are rejected. As far
+		as an attacker can tell, undocumented and "shadow" API surfaces don't exist.
+		Fails closed, not open.
 	</Card>
-	<Card title="Parameter Validation" icon="add-document">
-		Don't allow attackers to send in any parameters they want. Instead restrict
-		the available parameters to only those used by each endpoint directly.
+	<Card title="Full parameter validation" icon="approve-check">
+		Path, query, and form parameters are checked against your schema: types, formats,
+		enums, patterns, numeric bounds, lengths, and cardinality. Undeclared parameters
+		are blocked.
 	</Card>
-	<Card title="Data Type Checking" icon="setting">
-		OAShield rules act as positive input validation for REST applications. It works by
-		validating patterns defined within the OpenAPI spec, or if not defined, default
-		validations based on data type and other value restriction information from the
-		specification.
+	<Card title="Request-body validation" icon="document">
+		JSON bodies are validated field by field: required properties, types, bounds, and
+		an allowlist that rejects undeclared fields. On Coraza, the raw body is also
+		validated against a generated JSON Schema.
 	</Card>
-	<Card title="Unknown Endpoint Rejection" icon="warning">
-		Any unknown endpoints are rejected by default. Fails closed, not open!
+	<Card title="Two engines, one option" icon="setting">
+		Target ModSecurity v3 (libmodsecurity) or Coraza with a single flag. Most rules are
+		identical across both, and OAShield handles the engine-specific differences for you.
 	</Card>
-	<Card title="DevSecOps Friendly" icon="rocket">
-		Use CI/CD automation flows to automatically generate and publish the most recent
-		version of the API to the WAF, ensuring that your protection is always up to date!
+	<Card title="Configurable blocking" icon="random">
+		Deny with any status code, drop, redirect, or run in detection-only mode that logs
+		contract violations without blocking anything. Handy for rolling out safely.
 	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Additional background and information at [About OAShield](/about). Or dive in with [the OAShield Docs](/guides/install).
+	<Card title="Built for CI/CD" icon="rocket">
+		Regenerate rules on every release so your WAF always matches your API. No drift,
+		no manual rule writing. Pairs well with the
+		[OWASP Core Rule Set](https://coreruleset.org/) for defense in depth.
+	</Card>
+</CardGrid>
+
+## See it in action
+
+<CardGrid>
+	<Card title="Quick Start" icon="rocket">
+		Generate and deploy your first rule set in minutes.
+		[Get started →](/guides/start)
+	</Card>
+	<Card title="How It Works" icon="open-book">
+		Walk through the generated rules, block by block.
+		[Read the walkthrough →](/how)
+	</Card>
+	<Card title="Free & open source" icon="github">
+		Apache 2.0 licensed. Issues and pull requests welcome.
+		[View the license →](/license)
 	</Card>
 </CardGrid>

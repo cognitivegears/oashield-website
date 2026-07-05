@@ -1,0 +1,67 @@
+---
+title: Why OAShield?
+description: The case for generating positive-security WAF rules from your OpenAPI specification.
+---
+
+APIs are the front door of modern applications, and they take a constant beating. Most of
+the tooling that defends them is reactive: it looks for requests that resemble known
+attacks. OAShield takes the opposite approach. This page explains why that matters.
+
+## The problem with blocklists
+
+A conventional WAF ships with signatures for SQL injection, cross-site scripting, path
+traversal, and thousands of other known-bad patterns. That's genuinely useful, but it has
+a structural gap:
+
+- **Anything the signatures don't recognize passes through.** Novel attacks, zero-days,
+  and business-logic abuse don't match a pattern, so they aren't blocked.
+- **Your API's actual contract is invisible to it.** A generic WAF has no idea that
+  `DELETE /users/{id}` shouldn't exist, that `petId` must be an integer, or that the
+  `status` parameter only accepts three values.
+- **Shadow endpoints stay exposed.** Forgotten debug routes, deprecated versions, and
+  undocumented endpoints are just as reachable as documented ones.
+
+Developers are told to practice positive input validation: accept only known-good input.
+Yet most perimeter security tooling does the reverse. OAShield closes that gap.
+
+## The spec you already have is the policy you need
+
+If you maintain an [OpenAPI specification](/reference/openapi), you've already written
+down every legitimate endpoint, method, parameter, and body field your API accepts. That
+document is the source of truth for your clients, your docs, and your SDKs.
+
+OAShield makes it the source of truth for your perimeter too. It compiles the spec into
+[SecLang](https://coraza.io/docs/seclang/) rules that:
+
+1. **Allow** requests that match a declared operation and validate against its schema.
+2. **Deny everything else**: unknown endpoints, undeclared methods, extra parameters,
+   malformed values, undeclared body fields.
+
+See [How It Works](/how) for a block-by-block walkthrough of the generated rules.
+
+## What you get
+
+- **A much smaller attack surface.** Attackers can only interact with the exact
+  operations you declared, using the exact shapes you declared. Fuzzing, parameter
+  pollution, and endpoint discovery all hit a wall of 403s.
+- **Protection that doesn't depend on recognizing the attack.** An injection attempt in a
+  field that only accepts `^[0-9]{1,19}$` gets blocked because it isn't a valid integer.
+  No signature required.
+- **Your API contract, enforced at the edge.** Requests your application code was never
+  designed to handle are rejected before they reach it.
+- **Security that keeps up with development.** Regenerate rules in CI/CD on every release
+  and the WAF always matches the API. No drift, no stale hand-written rules. It also
+  keeps your spec accurate: if an endpoint isn't in the spec, it isn't reachable.
+- **No new infrastructure.** The output is standard SecLang. If you run nginx, Apache,
+  Envoy/Kubernetes ingress, or anything else that hosts ModSecurity v3 or Coraza, you can
+  deploy OAShield rules today. It's free, under the Apache 2.0 license.
+
+## Not a replacement, a missing layer
+
+OAShield complements signature-based protection like the
+[OWASP Core Rule Set](https://coreruleset.org/). Run both: CRS catches known attack
+patterns in the traffic you do allow, while OAShield makes sure the only traffic you
+allow is traffic your API actually defines. A blocklist and an allowlist, together.
+
+If you're evaluating alternatives, [Other Solutions](/alternatives) compares OAShield
+with commercial and open-source options.

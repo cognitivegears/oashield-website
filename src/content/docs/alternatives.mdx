@@ -1,0 +1,78 @@
+---
+title: Other Solutions
+description: Other ways to get positive, spec-driven validation of API traffic, and where each fits.
+---
+
+OAShield isn't the only way to enforce an OpenAPI contract at the perimeter. If you're
+evaluating options, here's what else is out there, including cases where something else
+might fit you better. Vendor capabilities change, so always confirm details against current
+documentation.
+
+## Cloud API gateways
+
+If your API already sits behind a managed gateway, check what validation it offers before
+adding anything:
+
+- **AWS API Gateway** can check request parameters and JSON bodies against models derived
+  from your schema, using request validators.
+- **Azure API Management** validates requests against the imported OpenAPI specification
+  through its `validate-content`, `validate-parameters`, and related policies.
+- **Google Apigee** validates requests against an attached OpenAPI 3.0 spec with the
+  `OASValidation` policy.
+
+The trade-off: validation depth and OpenAPI feature coverage vary by platform, and the
+enforcement lives inside that vendor's gateway rather than traveling with your workload.
+If you're all-in on one cloud gateway, this is the lowest-friction option. If you're
+multi-cloud, on-prem, or want enforcement in a sidecar next to the service, a WAF-layer
+approach like OAShield is more portable.
+
+## Commercial API security platforms
+
+Several commercial vendors offer positive security models built from API specifications,
+usually bundled with discovery, behavioral analytics, and managed support:
+
+- **42Crunch** builds its platform around the OpenAPI contract, including audit, scan,
+  and a runtime API firewall driven by the spec.
+- **F5 NGINX App Protect / BIG-IP Advanced WAF** can build positive security policies
+  from OpenAPI spec imports.
+- **Imperva API Security** offers spec-based and discovery-based positive security.
+- **Wallarm, Salt Security, Traceable, and others** are broader API security platforms
+  where spec-based enforcement is one feature among discovery and anomaly detection.
+
+These are full platforms. You get management UIs, analytics, and support, and you pay
+accordingly. OAShield deliberately does one thing: compile your spec into open,
+inspectable rules for engines you already run, at zero licensing cost.
+
+## Open-source alternatives
+
+- **[Wallarm API Firewall](https://github.com/wallarm/api-firewall)** is an open-source
+  reverse proxy that validates requests (and responses) against an OpenAPI 3.0 spec.
+  It's the closest in spirit to OAShield, but it's a proxy you deploy as a component,
+  whereas OAShield generates rules for a WAF engine you already have.
+- **Gateway plugins.** Kong's request/OAS validation plugins (enterprise) and Tyk's
+  schema validation can enforce parts of the contract if you run those gateways.
+- **Hand-written ModSecurity/Coraza rules.** SecLang can express everything OAShield
+  generates. The problem is writing and then maintaining allowlist rules for a real API
+  by hand: hundreds of rules that have to change with every release. That's the tedium
+  OAShield automates.
+- **Application-level validation.** Many frameworks can validate requests against the
+  spec in process (OpenAPI middleware for Express, Spring, FastAPI, and so on). Do this
+  too! But in-process validation only protects apps you can modify, and it runs after
+  traffic reaches your application. A perimeter layer rejects garbage before it touches
+  your code and covers services you can't change.
+
+## Where OAShield fits
+
+Choose OAShield when you want:
+
+- **Positive security at the WAF layer**, portable across nginx, Apache, Envoy-based, and
+  Go-native deployments via ModSecurity v3 or Coraza.
+- **Open, reviewable output**: plain SecLang `.conf` files you can read, diff, and audit,
+  not an opaque policy inside a platform.
+- **Generation, not a runtime dependency.** OAShield runs at build time. Nothing new runs
+  in your request path beyond the WAF you already operate.
+- **Zero licensing cost.** Apache 2.0, free for any use.
+
+And pair it with the [OWASP Core Rule Set](https://coreruleset.org/): OAShield narrows
+traffic to your contract, and CRS screens what remains for known attacks. See
+[Why OAShield?](/why) for the full argument.

@@ -1,26 +1,42 @@
 ---
-title: Open API
-description: Information about Open API 
+title: Positive Security Models
+description: What a positive security model is, and why allowlists beat blocklists for API security.
 ---
 
-import { LinkButton } from '@astrojs/starlight/components';
+A **positive security model** defines and permits only known, trusted behavior while
+blocking everything else. It's the opposite of a negative security model, which blocks
+known threats and allows all other activity by default. By focusing on what's explicitly
+allowed, positive security shrinks the potential attack surface considerably.
 
-Implementing a positive security model in cybersecurity involves defining and permitting only known, trusted behaviors while blocking all others. This approach contrasts with negative security models, which block known threats but allow all other activities by default. By focusing on explicitly allowed actions, positive security models can significantly reduce the potential attack surface.
+## Benefits of positive security models
 
-## Benefits of Positive Security Models:
+- **Fewer false negatives.** Only predefined legitimate activity is allowed, so malicious
+  actions that don't match a known threat pattern still get blocked. They just aren't on
+  the allowlist.
+- **Protection against zero-day attacks.** Since only specified behavior is permitted,
+  exploits for unknown vulnerabilities are far less likely to succeed. An attack doesn't
+  need to be recognized to be stopped.
+- **Strict input validation.** Only correctly formatted, expected data is processed,
+  which blunts injection attacks and other input-based threats before they reach
+  application code.
 
-Reduction in False Negatives: By allowing only predefined legitimate activities, positive security models minimize the chances of undetected malicious actions that don't match known threat patterns. 
+## The contradiction in common practice
 
-Protection Against Zero-Day Attacks: Since only specified behaviors are permitted, unknown vulnerabilities or exploits are less likely to be effective, enhancing defense against zero-day attacks. 
+Developers are (rightly) told to practice positive input validation and accept only known
+good inputs. Yet most perimeter security tooling does the reverse: it hunts for anomalies
+and known-bad patterns. That inconsistency leaves gaps in security coverage. Adopting
+perimeter tools that align with the positive model closes the gap between what secure
+coding guidance says and what the infrastructure actually enforces.
 
-Enhanced Input Validation: Positive security enforces strict input validation, ensuring that only correctly formatted and expected data is processed, thereby preventing injection attacks and other input-based threats. 
+## OAShield's role
 
-## OAShield's Role in Positive Security:
+OAShield applies the positive security model at the WAF layer by generating
+[ModSecurity and Coraza rules](/reference/modsecurity) from your
+[OpenAPI specification](/reference/openapi). Only valid API calls, as defined in the
+spec, are permitted. If an endpoint doesn't declare a `POST` method, every `POST` to it
+is blocked; if a parameter isn't declared, requests carrying it are rejected.
 
-OAShield exemplifies the positive security model by generating Web Application Firewall (WAF) configurations based on OpenAPI specifications. This ensures that only valid API calls, as defined in the specification, are permitted. For instance, if an API endpoint doesn't support a POST method, OAShield-generated rules will block any POST requests to that endpoint, effectively reducing the attack surface.
-
-## Contradiction in Security Practices:
-
-It's noteworthy that while developers are encouraged to implement positive input validation—accepting only known good inputs—many security tools predominantly focus on detecting anomalies or known bad patterns (negative security). This inconsistency c security coverage. Adopting tools and practices that align with the positive security model, like OAShield, can bridge this gap by ensuring that only explicitly permitted behaviors are allowed, thereby enhancing overall security posture.
-
-In conclusion, integrating positive security methods, such as those employed by OAShield, into your cybersecurity strategy can lead to a more robust defense by strictly enforcing known good behaviors and reducing reliance on detecting and responding to malicious activities after they occur.
+The trade-off of any allowlist is maintenance: the allowed list must stay current or it
+starts blocking legitimate traffic. OAShield addresses this by generating the allowlist
+from the API contract you already maintain, so keeping the WAF current is a build step
+rather than a manual chore. See [How It Works](/how) for the mechanics.

@@ -1,0 +1,80 @@
+---
+title: Use Cases
+description: Where OAShield fits, from public API hardening to legacy protection and CI/CD-driven security.
+---
+
+OAShield generates standard SecLang rules, so it fits anywhere
+[ModSecurity v3](https://github.com/owasp-modsecurity/ModSecurity) or
+[Coraza](https://coraza.io) runs. Here are the situations where it's most useful.
+
+## Hardening a public API
+
+Public APIs get scanned constantly: endpoint discovery, parameter fuzzing, method
+tampering, injection probes. With OAShield rules in front, everything outside your
+declared contract answers with a 403. Scanners see a surface made up of exactly your
+documented operations and nothing else. Run it alongside the
+[OWASP Core Rule Set](https://coreruleset.org/) so the traffic you *do* allow is still
+screened for known attack patterns.
+
+## Protecting APIs you can't change
+
+Legacy services, vendor-supplied applications, and third-party systems you host often
+have weak or unknown input validation, and no way to fix it in code. If you can describe
+the API in an OpenAPI spec (or already have one), OAShield gives you strict input
+validation in front of the application: only declared endpoints, valid types, in-range
+values, and known parameters get through. In effect, it's virtual patching driven by a
+contract instead of a CVE list.
+
+## Blocking shadow and zombie APIs
+
+Deprecated versions, debug routes, and endpoints that shipped but never made the docs are
+a classic breach vector. They're exposed but unmonitored. Because OAShield denies by
+default, anything not in the spec is unreachable. That works in both directions:
+attackers can't find undocumented endpoints, and your team gets a strong incentive to
+keep the spec accurate, because the spec *is* the perimeter.
+
+## Kubernetes sidecars and cloud-native ingress
+
+Coraza is written in Go and embeds cleanly into cloud-native proxies. Generate rules with
+`engineFlavor=coraza` and deploy them in a sidecar or at your ingress, and every service
+gets a contract-enforcing perimeter without touching application code. The same generated
+rules also load into ModSecurity v3 on nginx or Apache if that's your stack.
+
+## CI/CD: security that ships with the API
+
+Your spec changes every release. Hand-written WAF rules don't keep up, which is why they
+rot and eventually get disabled. OAShield works as a build step instead:
+
+1. CI validates the OpenAPI spec.
+2. OAShield generates fresh rules from it.
+3. The rules deploy with (or just ahead of) the new API version.
+
+The WAF can never drift from the API, because both are built from the same document.
+
+## Safe rollout with detection-only mode
+
+Worried a strict allowlist will block legitimate traffic? Generate with
+`denyAction=pass` and the rules log every contract violation without blocking anything.
+Run that in production for a while. The audit log will show you exactly which real
+traffic falls outside your spec, which often turns up spec gaps worth fixing. When the
+log goes quiet, regenerate with blocking enabled. Details in
+[Configuration](/guides/configuration).
+
+## Monitoring API contract drift
+
+Even if you never turn on blocking, detection-only rules make a useful observability
+tool. They surface clients sending undocumented parameters, integrations relying on
+deprecated endpoints, and internal consumers who never read the docs. The WAF audit log
+becomes a running report of everything that disagrees with your spec.
+
+## Compliance and zero-trust requirements
+
+Frameworks and internal policies increasingly require positive input validation and
+deny-by-default posture (OWASP ASVS input-validation requirements, for example). Because
+OAShield's rules are generated from a reviewable document and are themselves plain-text
+SecLang, you can show an auditor precisely what is allowed and why, and regenerate the
+evidence on demand.
+
+---
+
+Ready to try it on your own spec? Head to the [Quick Start](/guides/start).
